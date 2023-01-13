@@ -1,0 +1,255 @@
+<html>
+<head>
+    <title>OXO</title>
+    <style>
+        body{
+            background-color: black;
+        }
+        *{
+            margin: 0px; 
+            padding: 0px;
+            user-select: none;
+        }
+        .window{
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .sector{
+            width: 50px;
+            height: 50px;
+            border: 3px solid white;
+            color: white;
+            text-shadow:  0 0 10px #FFF, 0 0 15px #FFF, 0 0 20px #0055FF, 0 0 30px #0055FF, 0 0 40px #0055FF, 0 0 55px #0055FF, 0 0 75px #0055FF;
+            font-size: 40px;
+            font-family: arial;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .col{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        #map{display: none;}
+        .neon{
+            text-shadow:  0 0 10px #FFF, 0 0 15px #FFF, 0 0 20px #0055FF, 0 0 30px #0055FF, 0 0 40px #0055FF, 0 0 55px #0055FF, 0 0 75px #0055FF;
+            color: white;
+            font-family: arial;
+            margin-top: 15px;
+        }
+        .popup{
+            width: 200px;
+            height: 240px;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            color: white;
+            padding: 10px;
+            font-family: arial;
+            flex-direction: column;
+            text-align: center;
+            text-shadow:  0 0 10px #FFF, 0 0 15px #FFF, 0 0 20px #0055FF, 0 0 30px #0055FF, 0 0 40px #0055FF, 0 0 55px #0055FF, 0 0 75px #0055FF;
+            box-shadow:  0 0 10px #FFF, 0 0 15px #FFF, 0 0 20px #0055FF, 0 0 30px #0055FF, 0 0 40px #0055FF, 0 0 55px #0055FF, 0 0 75px #0055FF;
+        }
+        .input{
+            width: 35px;
+            margin-left: 10px;
+            background-color: black;
+            border: 2px solid white;
+            outline: none;
+            color: white;
+            font-size: 15px;
+            text-align: center;
+            text-shadow:  0 0 10px #FFF;
+            box-shadow:  0 0 7px #FFF, 0 0 12px #FFF, 0 0 15px #0055FF, 0 0 25px #0055FF, 0 0 35px #0055FF, 0 0 50px #0055FF;
+        }
+        .button{
+            margin-top: 15px;
+            border: 0px;
+            width: 55px;
+            background-color: black;
+            outline: none;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow:  0 0 7px #FFF, 0 0 12px #FFF, 0 0 15px #0055FF, 0 0 25px #0055FF, 0 0 35px #0055FF, 0 0 50px #0055FF;
+            color: white;
+        }
+        .button:hover{
+            background-color: white;
+            text-align: center;
+            box-shadow:  0 0 7px #FFF, 0 0 12px #FFF, 0 0 15px #0055FF, 0 0 25px #0055FF, 0 0 35px #0055FF, 0 0 50px #0055FF;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <div class="popup" id="popup">
+            <p>Game settings</p>
+            <br>
+            <p style="margin-top: 10px;">Player 1 symbol:<input id="char1" maxlength="1" class="input" value="O"></p>
+            <p style="margin-top: 10px;">Player 2 symbol:<input id="char2" maxlength="1" class="input" value="X"></p>
+            <p style="margin-top: 10px;">Max score:<input id="maxScore" min="1" style="width: 45px; margin-left: 40px;" max="99" class="input" value="3" type="number"></p>
+            <p style="margin-top: 10px;">Player 1 goes first</p>
+            <p style="margin-top: 10px;">Score format: Player1:Player2</p>
+            <center><input onclick="game()" class="button" type="button" value="Go!"></center>
+        </div>
+        <div style="height: 100px; display: none;" class="popup" id="winpopup" >
+            <p id="whowins">Player1 wins!!!</p>
+            <br>
+            <center><input onclick="location.reload();" style="width: 90px;" class="button" type="button" value="Play again"></center>
+        </div>
+        <div id="map">
+            <div class="col">
+                <div style="border-top: 0px; border-left: 0px;" id="11" onclick="step(this);" class="sector"></div>
+                <div style="border-top: 0px;" id="12" onclick="step(this);" class="sector"></div>
+                <div style="border-top: 0px; border-right: 0px;" id="13" onclick="step(this);" class="sector"></div>
+            </div>
+            <div class="col">
+                <div style="border-left: 0px;" id="21" onclick="step(this);" class="sector"></div>
+                <div id="22" onclick="step(this);" class="sector"></div>
+                <div style="border-right: 0px;" id="23" onclick="step(this);" class="sector"></div>
+            </div>
+            <div class="col">
+                <div style="border-bottom: 0px; border-left: 0px;" id="31" onclick="step(this);" class="sector"></div>
+                <div style="border-bottom: 0px;" id="32" onclick="step(this);" class="sector"></div>
+                <div style="border-bottom: 0px; border-right: 0px;" id="33" onclick="step(this);" class="sector"></div>
+            </div>
+            <center>
+                <p class="neon" id="score">0 : 0</p>
+                <p class="neon" id="move">Player1 move.</p>
+                <p class="neon" id="wins"></p>
+            </center>
+        </div>
+        
+    </div>
+    <script>
+        var asd = 0;
+        var scoreP1 = 0;
+        var scoreP2 = 0;
+        var maxScore = 0;
+        var playerChar = "O";
+        var playerChar2 = "X";
+        var whoStep = true; 
+        var id;
+        var steps = 0;
+        function g(id){
+            return document.getElementById(id).innerHTML;
+        }
+        function step(id){
+            if(id.innerHTML == ""){
+                steps++;
+                if(whoStep){
+                    id.style.textShadow = "0 0 7px #FFF, 0 0 12px #FFF, 0 0 15px #0055FF, 0 0 25px #0055FF, 0 0 35px #0055FF, 0 0 50px #0055FF"
+                    id.innerHTML = playerChar;
+                    whoStep = false;
+                    check();
+                    
+                }
+                else{
+                    id.style.textShadow = "0 0 7px #FFF, 0 0 12px #FFF, 0 0 15px red, 0 0 25px red, 0 0 35px red, 0 0 50px red"
+                    id.innerHTML = playerChar2;
+                    whoStep = true;
+                    check();
+                }
+            }
+        }
+        function clear(){
+            document.getElementById("11").innerHTML = "";
+            document.getElementById("12").innerHTML = "";
+            document.getElementById("13").innerHTML = "";
+            document.getElementById("21").innerHTML = "";
+            document.getElementById("22").innerHTML = "";
+            document.getElementById("23").innerHTML = "";
+            document.getElementById("33").innerHTML = "";
+            document.getElementById("32").innerHTML = "";
+            document.getElementById("31").innerHTML = "";
+        }
+        function renderText(txt){
+            document.getElementById("score").innerHTML = scoreP1 + " : " + scoreP2;
+
+            document.getElementById("wins").innerHTML = txt;
+        }
+        function win(text){
+            document.getElementById("map").style.display = "none";
+            document.getElementById("popup").style.display = "none";
+            document.getElementById("winpopup").style.display = "flex";
+            document.getElementById("whowins").innerHTML = text;
+        }
+        function check(){
+            if(g("11") == playerChar && g("12") == playerChar && g("13") == playerChar){asd = 1;}
+            if(g("21") == playerChar && g("22") == playerChar && g("23") == playerChar){asd = 1;}
+            if(g("31") == playerChar && g("32") == playerChar && g("33") == playerChar){asd = 1;}
+            if(g("11") == playerChar2 && g("12") == playerChar2 && g("13") == playerChar2){asd = 2;}
+            if(g("21") == playerChar2 && g("22") == playerChar2 && g("23") == playerChar2){asd = 2;}
+            if(g("31") == playerChar2 && g("32") == playerChar2 && g("33") == playerChar2){asd = 2;}
+            //////////////////////////////////////////////////////////////////////////////////////////////
+            if(g("11") == playerChar2 && g("21") == playerChar2 && g("31") == playerChar2){asd = 2;}
+            if(g("12") == playerChar2 && g("22") == playerChar2 && g("32") == playerChar2){asd = 2;}
+            if(g("13") == playerChar2 && g("23") == playerChar2 && g("33") == playerChar2){asd = 2;}
+            if(g("11") == playerChar && g("21") == playerChar && g("31") == playerChar){asd = 1;}
+            if(g("12") == playerChar && g("22") == playerChar && g("32") == playerChar){asd = 1;}
+            if(g("13") == playerChar && g("23") == playerChar && g("33") == playerChar){asd = 1;}
+            //////////////////////////////////////////////////////////////////////////////////////////////
+            if(g("11") == playerChar && g("22") == playerChar && g("33") == playerChar){asd = 1;}
+            if(g("13") == playerChar && g("22") == playerChar && g("31") == playerChar){asd = 1;}
+            if(g("11") == playerChar2 && g("22") == playerChar2 && g("33") == playerChar2){asd = 2;}
+            if(g("13") == playerChar2 && g("22") == playerChar2 && g("31") == playerChar2){asd = 2;}
+            //////////////////////////////////////////////////////////////////////////////////////////////
+            if(g("11") != "" &&
+            g("12") != "" &&
+            g("13") != "" &&
+            g("21") != "" &&
+            g("22") != "" &&
+            g("23") != "" &&
+            g("31") != "" &&
+            g("32") != "" &&
+            g("33") != ""
+            ){asd = 3;}
+            if(asd == 1){
+                clear();
+                scoreP1++;
+                renderText("Player1 win.");
+                whoStep = true;
+                asd = 0;
+            }
+            else if(asd == 2){
+                clear();
+                scoreP2++;
+                renderText("Player2 win.");
+                whoStep = true;
+                asd = 0;
+            }
+            else if(asd == 3){
+                clear();
+                whoStep = true;
+                renderText("No one won..."); 
+                asd = 0;
+            }
+            if(scoreP1 >= maxScore){
+                win("Player1 wins!");
+            }
+            else if(scoreP2 >= maxScore){
+                win("Player2 wins!");
+            }
+            if(whoStep){
+                document.getElementById("move").innerHTML = "Player1 move";
+            }
+            else{document.getElementById("move").innerHTML = "Player2 move";}
+        }
+        function game(){
+            document.getElementById("popup").style.display = "none"
+            document.getElementById("map").style.display = "block"
+            playerChar = document.getElementById("char1").value;
+            playerChar2 = document.getElementById("char2").value;
+            maxScore = document.getElementById("maxScore").value;
+        }
+    </script>
+</body>
+</html>
